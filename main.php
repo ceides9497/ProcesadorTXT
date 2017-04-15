@@ -20,7 +20,7 @@
         extension = (archivo.substring(archivo.lastIndexOf("."))).toLowerCase();
         if(extension == ".txt")
             return true;
-        alert("Debe inserta un archivo .txt obligatoriamente, Gracias.");
+        alert("Debe insertar un archivo .txt obligatoriamente, Gracias.");
         return false;
     }
 </script>
