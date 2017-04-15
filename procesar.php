@@ -1,4 +1,5 @@
 <?php
+	include("excelwriter.inc.php");
   $error = null;
   //error_reporting(0);
   copy($_FILES['archivo']['tmp_name'],$_FILES['archivo']['name']);
@@ -10,6 +11,12 @@
     //echo "yeah";
     rename($nombre, "mi_fichero.txt");
   }
+  $excel=new ExcelWriter("resultado.xls");
+  if($excel==false)
+		echo $excel->error;
+  $myArr=array("X","Num","Fecha","Numero Factura","Numero de Autorizacion","V","NIT","Nombre","Monto 1","Monto 2","Monto 3","Monto 4",
+                "Monto 5","Descuento","Monto de la transaccion","Impuesto","Codigo de control","Codigo de control VERIFICADO");
+	$excel->writeLine($myArr);
 
   $fi = fopen("resultado.txt","w+") or die ("Problemas al recuperar el archivo");
   include 'codigocontrol.php';
@@ -31,12 +38,25 @@
                                               $reg[14],//Monto de la transacción
                                              $_POST['dosageKey']//Llave de dosificación
                       );
-              fwrite($fi,$line."=>".$code.PHP_EOL);
+              fwrite($fi,$line." =>".$code.PHP_EOL);
+              $resultado = count($reg);
+              if ($resultado == 16) {
+                $myArr=array($reg[0],$reg[1],$reg[2],$reg[3],$reg[4],$reg[5],$reg[6],$reg[7],
+                              $reg[8],$reg[9],$reg[10],$reg[11],$reg[12],$reg[13],$reg[14],$reg[15],"Sin Codigo",$code);
+              	$excel->writeLine($myArr);
+              }
+              if ($resultado == 17){
+                $myArr=array($reg[0],$reg[1],$reg[2],$reg[3],$reg[4],$reg[5],$reg[6],$reg[7],
+                              $reg[8],$reg[9],$reg[10],$reg[11],$reg[12],$reg[13],$reg[14],$reg[15],$reg[16],$code);
+              	$excel->writeLine($myArr);
+              }
+
           }
       fclose($handle);
       }else{
            throw new Exception("<b>Could not open the file!</b>");
       }
+      $excel->close();
   }catch ( Exception $e ){
     $error = true;
     echo "<center>
@@ -58,7 +78,11 @@
         <h1>Exito!!!</h1>
         <b>Ahora puede descargar el archivo.</b><br><br>
         <form action="descargar.php" method="post" enctype="multipart/form-data">
-          <input type="submit" name="submit" value="Descargar">
+          <input type="submit" name="submit" value="Descargar en .txt">
+        </form>
+        <br>
+        <form action="descargarExcel.php" method="post" enctype="multipart/form-data">
+          <input type="submit" name="submit" value="Descargar en .xls">
         </form>
         <br>
         <button type="button" name="button"><a href="main.php" style="color:black;  text-decoration:none;">Volver</a></button>
