@@ -13,7 +13,7 @@
     <input type="text" name="dosageKey" value="" size="65" required=""><br><br>
     <label for="archivo">Seleccionar archivo a subir:</label>
     <input type="file" name="archivo" id="archivo" accept="text/plain"><br><br>
-    <input type="submit" value="Upload" name="submit" required="" onclick="return comprueba_extension(this.form, this.form.archivo.value)">
+    <input type="submit" value="Subir archivo .txt" name="submit" required="" onclick="return comprueba_extension(this.form, this.form.archivo.value)">
 </form>
 <script type="text/javascript">
     function comprueba_extension(formulario, archivo){
