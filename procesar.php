@@ -100,55 +100,36 @@
     $excel=new ExcelWriter("resultado.xls");
     if($excel==false)
       echo $excel->error;
-    $myArr=array("NIT","Nombre; Pais; Placa","Fecha","Numero Factura","Numero de Autorizacion","V","NIT","Nombre","Monto 1","Monto 2","Monto 3","Monto 4",
-                  "Monto 5","Descuento","Monto de la transaccion","Impuesto","Codigo de control","Codigo de control VERIFICADO");
+    $myArr=array("NIT","Nombre; Pais; Placa","Numero Factura","Numero de Autorizacion","Fecha","Monto","Monto 2",
+                  "Descuento","Monto de la transaccion","Impuesto","Producto","Codigo de control","Codigo de control VERIFICADO");
     $excel->writeLine($myArr);
     while (($line = fgets($handle)) !== false) {
         $reg = explode("|", $line);
         //genera codigo de control
-        $fecha = str_replace('/', '-',$reg[2]);
+        $fecha = str_replace('/', '-',$reg[4]);
         $fecha = date("Y-m-d",strtotime($fecha));
-        if(!(($reg[5]=="V" || $reg[5]=="v") && $reg[14] > 0)){
+        if(!($reg[8] > 0)){
           fwrite($fi,$line." => Sin Codigo de control".PHP_EOL);
-          $resultado = count($reg);
-          if ($resultado == 16) {
             $myArr=array($reg[0],$reg[1],$reg[2],$reg[3],$reg[4],$reg[5],$reg[6],$reg[7],
-                          $reg[8],$reg[9],$reg[10],$reg[11],$reg[12],$reg[13],$reg[14],$reg[15],"Sin Codigo","Sin Codigo de control");
+                          $reg[8],$reg[9],$reg[10],$reg[11],"Sin Codigo de control");
             $excel->writeLine($myArr);
-          }
-          if ($resultado == 17){
-            $myArr=array($reg[0],$reg[1],$reg[2],$reg[3],$reg[4],$reg[5],$reg[6],$reg[7],
-                          $reg[8],$reg[9],$reg[10],$reg[11],$reg[12],$reg[13],$reg[14],$reg[15],$reg[16],"Sin Codigo de control");
-            $excel->writeLine($myArr);
-          }
         }else {
           $code = $controlCode->generate($_POST['authorizationNumber'],//Numero de autorizacion
-                                          $reg[3],//Numero de factura
-                                          $reg[6],//Número de Identificación Tributaria o Carnet de Identidad
+                                          $reg[2],//Numero de factura
+                                          $reg[0],//Número de Identificación Tributaria o Carnet de Identidad
                                           str_replace('-','',$fecha),//fecha de transaccion de la forma AAAAMMDD
-                                          $reg[14],//Monto de la transacción
+                                          $reg[8],//Monto de la transacción
                                          $_POST['dosageKey']//Llave de dosificación
                   );
           fwrite($fi,$line." =>".$code.PHP_EOL);
-          $resultado = count($reg);
-          if ($resultado == 16) {
             $myArr=array($reg[0],$reg[1],$reg[2],$reg[3],$reg[4],$reg[5],$reg[6],$reg[7],
-                          $reg[8],$reg[9],$reg[10],$reg[11],$reg[12],$reg[13],$reg[14],$reg[15],"Sin Codigo",$code);
+                          $reg[8],$reg[9],$reg[10],$reg[11],$code);
             $excel->writeLine($myArr);
-          }
-          if ($resultado == 17){
-            $myArr=array($reg[0],$reg[1],$reg[2],$reg[3],$reg[4],$reg[5],$reg[6],$reg[7],
-                          $reg[8],$reg[9],$reg[10],$reg[11],$reg[12],$reg[13],$reg[14],$reg[15],$reg[16],$code);
-            $excel->writeLine($myArr);
-          }
         }
     }
     $excel->close();
     fclose($fi);
   }
-
-
-
 ?>
 <!DOCTYPE html>
 <html>
