@@ -44,6 +44,7 @@
   }
 
   function paraNormal($handle,$controlCode){
+    fseek($handle, 0);
     $fi = fopen("resultado.txt","w+") or die ("Problemas al recuperar el archivo");
     $excel=new ExcelWriter("resultado.xls");
     if($excel==false)
@@ -61,12 +62,18 @@
           $resultado = count($reg);
           if ($resultado == 16) {
             $myArr=array($reg[0],$reg[1],$reg[2],$reg[3],$reg[4],$reg[5],$reg[6],$reg[7],
-                          $reg[8],$reg[9],$reg[10],$reg[11],$reg[12],$reg[13],$reg[14],$reg[15],"Sin Codigo","Sin Codigo de control");
+            str_replace('.',',',$reg[8]),str_replace('.',',',$reg[9]),
+            str_replace('.',',',$reg[10]),str_replace('.',',',$reg[11]),
+            str_replace('.',',',$reg[12]),str_replace('.',',',$reg[13]),
+            str_replace('.',',',$reg[14]),str_replace('.',',',$reg[15]),"Sin Codigo","Sin Codigo de control");
             $excel->writeLine($myArr);
           }
           if ($resultado == 17){
             $myArr=array($reg[0],$reg[1],$reg[2],$reg[3],$reg[4],$reg[5],$reg[6],$reg[7],
-                          $reg[8],$reg[9],$reg[10],$reg[11],$reg[12],$reg[13],$reg[14],$reg[15],$reg[16],"Sin Codigo de control");
+            str_replace('.',',',$reg[8]),str_replace('.',',',$reg[9]),
+            str_replace('.',',',$reg[10]),str_replace('.',',',$reg[11]),
+            str_replace('.',',',$reg[12]),str_replace('.',',',$reg[13]),
+            str_replace('.',',',$reg[14]),str_replace('.',',',$reg[15]),$reg[16],"Sin Codigo de control");
             $excel->writeLine($myArr);
           }
         }else {
@@ -81,12 +88,18 @@
           $resultado = count($reg);
           if ($resultado == 16) {
             $myArr=array($reg[0],$reg[1],$reg[2],$reg[3],$reg[4],$reg[5],$reg[6],$reg[7],
-                          $reg[8],$reg[9],$reg[10],$reg[11],$reg[12],$reg[13],$reg[14],$reg[15],"Sin Codigo",$code);
+            str_replace('.',',',$reg[8]),str_replace('.',',',$reg[9]),
+            str_replace('.',',',$reg[10]),str_replace('.',',',$reg[11]),
+            str_replace('.',',',$reg[12]),str_replace('.',',',$reg[13]),
+            str_replace('.',',',$reg[14]),str_replace('.',',',$reg[15]),"Sin Codigo",$code);
             $excel->writeLine($myArr);
           }
           if ($resultado == 17){
             $myArr=array($reg[0],$reg[1],$reg[2],$reg[3],$reg[4],$reg[5],$reg[6],$reg[7],
-                          $reg[8],$reg[9],$reg[10],$reg[11],$reg[12],$reg[13],$reg[14],$reg[15],$reg[16],$code);
+                          str_replace('.',',',$reg[8]),str_replace('.',',',$reg[9]),
+                          str_replace('.',',',$reg[10]),str_replace('.',',',$reg[11]),
+                          str_replace('.',',',$reg[12]),str_replace('.',',',$reg[13]),
+                          str_replace('.',',',$reg[14]),str_replace('.',',',$reg[15]),$reg[16],$code);
             $excel->writeLine($myArr);
           }
         }
@@ -96,6 +109,7 @@
   }
 
   function paraLibros($handle,$controlCode){
+    fseek($handle, 0);
     $fi = fopen("resultado.txt","w+") or die ("Problemas al recuperar el archivo");
     $excel=new ExcelWriter("resultado.xls");
     if($excel==false)
@@ -108,10 +122,11 @@
         //genera codigo de control
         $fecha = str_replace('/', '-',$reg[4]);
         $fecha = date("Y-m-d",strtotime($fecha));
+        $reg[0] = (int)preg_replace("/[^0-9,.]/", "", $reg[0]);
         if(!($reg[8] > 0)){
           fwrite($fi,$line." => Sin Codigo de control".PHP_EOL);
-            $myArr=array($reg[0],$reg[1],$reg[2],$reg[3],$reg[4],$reg[5],$reg[6],$reg[7],
-                          $reg[8],$reg[9],$reg[10],$reg[11],"Sin Codigo de control");
+            $myArr=array($reg[0],$reg[1],$reg[2],$reg[3],$reg[4],str_replace('.',',',$reg[5]),str_replace('.',',',$reg[6]),str_replace('.',',',$reg[7]),
+                          str_replace('.',',',$reg[8]),str_replace('.',',',$reg[9]),$reg[10],$reg[11],"Sin Codigo de control");
             $excel->writeLine($myArr);
         }else {
           $code = $controlCode->generate($_POST['authorizationNumber'],//Numero de autorizacion
@@ -122,8 +137,8 @@
                                          $_POST['dosageKey']//Llave de dosificación
                   );
           fwrite($fi,$line." =>".$code.PHP_EOL);
-            $myArr=array($reg[0],$reg[1],$reg[2],$reg[3],$reg[4],$reg[5],$reg[6],$reg[7],
-                          $reg[8],$reg[9],$reg[10],$reg[11],$code);
+            $myArr=array($reg[0],$reg[1],$reg[2],$reg[3],$reg[4],str_replace('.',',',$reg[5]),str_replace('.',',',$reg[6]),str_replace('.',',',$reg[7]),
+                          str_replace('.',',',$reg[8]),str_replace('.',',',$reg[9]),$reg[10],$reg[11],$code);
             $excel->writeLine($myArr);
         }
     }
